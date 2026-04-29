@@ -18,6 +18,7 @@
 
 # 3. Environment Variables (Bảo mật - KHÔNG ĐƯỢC XÓA)
 .env*
+.env.local
 
 # 4. Logs & Debugging
 npm-debug.log*
@@ -41,3 +42,6 @@ desktop.ini
 
 # 7. Next.js specific
 next-env.d.ts
+
+#public
+public/tmp

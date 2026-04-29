@@ -1,26 +1,52 @@
+/* src/app/globals.css */
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #140607;
+  --foreground: #f7ece8;
+  --surface: #1d080b;
+  --surface-2: #2a0b10;
+  --border: #4d141a;
+  --accent: #ff5a1f;
+  --accent-2: #ff8a1f;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-primary: var(--accent);
+  --color-primary-2: var(--accent-2);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #120506;
+    --foreground: #f8efeb;
+    --surface: #19070a;
+    --surface-2: #24090d;
+    --border: #5a171f;
+    --accent: #ff5a1f;
+    --accent-2: #ff8a1f;
   }
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(
+      1200px 420px at 50% -120px,
+      #3a090f 0%,
+      rgba(58, 9, 15, 0) 70%
+    ),
+    linear-gradient(180deg, #1a0508 0%, var(--background) 30%, #120405 100%);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    var(--font-sans), "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  color-scheme: dark;
 }
