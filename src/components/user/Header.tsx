@@ -6,7 +6,7 @@ import { useAuth } from "@/context/auth/AuthContext";
 import { authService } from "@/services/auth.service";
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "@/components/Logo";
+import Logo from "@/components/svg/Logo";
 
 export default function Header() {
   const { user, setUser, loading } = useAuth();
