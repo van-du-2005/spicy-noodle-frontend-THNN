@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+/* stylelint-disable at-rule-no-unknown */
+
 :root {
   --background: #140607;
   --foreground: #f7ece8;
@@ -10,6 +12,11 @@
   --border: #4d141a;
   --accent: #ff5a1f;
   --accent-2: #ff8a1f;
+  --panel-elevated: #120405;
+  --panel-elevated-2: #1a0709;
+  --panel-elevated-border: #3f1a20;
+  --panel-elevated-hover: #4a161d;
+  --panel-shadow: rgba(255, 90, 31, 0.16);
 }
 
 @theme inline {
@@ -20,6 +27,10 @@
   --color-border: var(--border);
   --color-primary: var(--accent);
   --color-primary-2: var(--accent-2);
+  --color-panel-elevated: var(--panel-elevated);
+  --color-panel-elevated-2: var(--panel-elevated-2);
+  --color-panel-elevated-border: var(--panel-elevated-border);
+  --color-panel-elevated-hover: var(--panel-elevated-hover);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -33,8 +44,15 @@
     --border: #5a171f;
     --accent: #ff5a1f;
     --accent-2: #ff8a1f;
+    --panel-elevated: #0f0405;
+    --panel-elevated-2: #180709;
+    --panel-elevated-border: #472026;
+    --panel-elevated-hover: #551923;
+    --panel-shadow: rgba(255, 90, 31, 0.18);
   }
 }
+
+/* stylelint-enable at-rule-no-unknown */
 
 body {
   background:

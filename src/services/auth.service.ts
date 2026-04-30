@@ -16,5 +16,14 @@ export const authService = {
   getGoogleLoginUrl: () => `${API_URL}/auth/google`,
 
   // Đường dẫn đăng xuất
-  getLogoutUrl: () => `${API_URL}/auth/logout`
+  logout: async () => {
+    const response = await axios.post(
+      `${API_URL}/auth/logout`,
+      {},
+      {
+        withCredentials: true, // Quan trọng để Backend xóa được Cookie
+      },
+    );
+    return response.data;
+  },
 };
