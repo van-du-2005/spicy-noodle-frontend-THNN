@@ -10,17 +10,12 @@ import {
 } from "react";
 import { authService } from "@/services/auth.service"; // Sẽ tạo ở bước 3
 
-type AuthUser = {
-  name?: string;
-  email?: string;
-  role?: string;
-  avatar?: string;
-  [key: string]: unknown;
-};
+import { IUser } from "@/types/user.type";
+
 
 type AuthContextValue = {
-  user: AuthUser | null;
-  setUser: (user: AuthUser | null) => void;
+  user: IUser | null;
+  setUser: (user: IUser | null) => void;
   loading: boolean;
   checkLoginStatus: () => Promise<void>;
 };
@@ -28,7 +23,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   const checkLoginStatus = async () => {

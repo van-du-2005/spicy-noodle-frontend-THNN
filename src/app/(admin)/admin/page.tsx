@@ -1,3 +1,5 @@
+// src/app/(admin)/page.tsx
+
 export default function AdminPage() {
   return (
     <div className="grid gap-4 lg:grid-cols-3">

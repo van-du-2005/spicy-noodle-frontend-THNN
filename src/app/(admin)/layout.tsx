@@ -1,3 +1,5 @@
+// src/app/(admin)/layout.tsx
+
 /* stylelint-disable selector-class-pattern */
 "use client";
 
@@ -5,6 +7,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminGuard from "@/components/auth/AdminGuard";
 
 type AdminSectionKey = "overview" | "menu" | "orders" | "customers" | "ai";
 
@@ -36,11 +39,11 @@ const adminSectionMeta: Record<
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [activeItem, setActiveItem] = useState<AdminSectionKey>("overview");
-
   const currentSection = adminSectionMeta[activeItem];
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <AdminGuard>
+      <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 h-screen shrink-0">
         <AdminSidebar
           activeItem={activeItem}
@@ -58,5 +61,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </main>
       </div>
     </div>
+    </AdminGuard>
+
+    
   );
 }
