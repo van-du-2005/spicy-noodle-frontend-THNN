@@ -96,6 +96,9 @@ export default function Header() {
         <Link href="/contact" className="text-foreground hover:text-primary">
           Liên hệ
         </Link>
+        <Link href="/chatbot" className="text-foreground hover:text-primary">
+          Chatbot
+        </Link>
       </nav>
 
       {/* Right: search, cart, auth */}
@@ -146,9 +149,9 @@ export default function Header() {
                 aria-expanded={isUserMenuOpen}
               >
                 <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[radial-gradient(circle_at_top,#ff8a1f_0%,#7a141c_40%,#170608_100%)] shadow-[0_0_0_1px_rgba(255,90,31,0.08),0_0_18px_rgba(255,90,31,0.12)]">
-                  {user.avatar ? (
+                  {user.avatar_url ? (
                     <Image
-                      src={user.avatar}
+                      src={user.avatar_url}
                       alt="avatar"
                       referrerPolicy="no-referrer"
                       fill
