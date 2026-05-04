@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { profileService } from "@/services/profile.service";
 import { useAuth } from "@/context/auth/AuthContext"; 
 import { IUser } from "@/types/user.type"; // Import type vào đây
+import axios from "axios";
 
 
 export const useProfile = () => {
@@ -38,12 +39,14 @@ export const useProfile = () => {
         // Báo cho Context biết user đã đổi tên/thông tin để nó tải lại
         await checkLoginStatus(); 
         
-        return true;
+        return { success: true, message: "Cập nhật hồ sơ thành công!" };
       }
-      return false;
+      return { success: false, message: "Cập nhật thất bại." };
     } catch (error) {
-      console.error("Lỗi khi cập nhật:", error);
-      return false;
+      if (axios.isAxiosError(error) && error.response) {
+        return { success: false, message: error.response.data.message };
+      }
+      return { success: false, message: "Lỗi kết nối đến máy chủ." };
     }
   };
 

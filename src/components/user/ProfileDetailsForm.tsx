@@ -1,7 +1,8 @@
 // src/components/user/ProfileDetailsForm.tsx
 
 import React, { useState } from "react";
-import { IUser } from "@/types/user.type"; // Import type
+import { IUser } from "@/types/user.type";
+import { validatorUtil } from "@/utils/validator.util";
 
 type Props = {
   initialName?: IUser["name"];
@@ -9,7 +10,12 @@ type Props = {
   initialPhone?: IUser["phone"];
   initialBirthDate?: IUser["date_of_birth"];
   initialTotalPoints?: IUser["total_points"];
-  onSave?: (values: { name: string; email: string; phone: string; birthDate: string; }) => Promise<void>; 
+  onSave?: (values: {
+    name: string;
+    email: string;
+    phone: string;
+    birthDate: string;
+  }) => Promise<boolean>;
 };
 
 const ProfileDetailsForm: React.FC<Props> = ({
@@ -38,9 +44,18 @@ const ProfileDetailsForm: React.FC<Props> = ({
     if (initialPhone) setPhone(initialPhone);
     if (initialBirthDate) setBirthDate(initialBirthDate);
     if (initialTotalPoints !== undefined) setTotalPoints(initialTotalPoints);
-  }, [initialName, initialEmail, initialPhone, initialBirthDate, initialTotalPoints]);
+  }, [
+    initialName,
+    initialEmail,
+    initialPhone,
+    initialBirthDate,
+    initialTotalPoints,
+  ]);
 
-  function formatDate(value: string) {
+  // THÊM: State quản lý lỗi Frontend
+  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+
+  function formatDate(value?: string | null) {
     if (!value) return "Chưa cập nhật";
     try {
       return new Intl.DateTimeFormat("vi-VN", {
@@ -57,16 +72,41 @@ const ProfileDetailsForm: React.FC<Props> = ({
     event.preventDefault();
     if (!isEditingName && !isEditingPhone && !isEditingBirthDate) return;
 
-    setIsLoading(true);
-
-    // Chờ API chạy xong thật sự thay vì delay ảo
-    if (onSave) {
-      await onSave({ name: name || "", email: email || "", phone: phone || "", birthDate: birthDate || "" });
+    //  VALIDATE TRƯỚC KHI GỌI API
+    const newErrors: { name?: string; phone?: string } = {};
+    if (isEditingName && !validatorUtil.isValidName(name || "")) {
+      newErrors.name = "Họ và tên không được để trống";
+    }
+    if (isEditingPhone && !validatorUtil.isValidPhone(phone || "")) {
+      newErrors.phone =
+        "Số điện thoại không hợp lệ (gồm 10 số, bắt đầu bằng 03,05,07,08,09)";
     }
 
-    setIsEditingName(false);
-    setIsEditingPhone(false);
-    setIsEditingBirthDate(false);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors); // Có lỗi thì set state để render chữ đỏ
+      return;
+    }
+
+    //qua được validate, xóa lỗi cũ
+    setErrors({});
+    setIsLoading(true);
+
+    // GỌI BACKEND VÀ CHỜ KẾT QUẢ
+    if (onSave) {
+      const isSuccess = await onSave({
+        name: name || "",
+        email: email || "",
+        phone: phone || "",
+        birthDate: birthDate || "",
+      });
+
+      // Backend báo thành công thì mới đóng các ô input lại
+      if (isSuccess) {
+        setIsEditingName(false);
+        setIsEditingPhone(false);
+        setIsEditingBirthDate(false);
+      }
+    }
     setIsLoading(false);
   }
 
@@ -91,35 +131,45 @@ const ProfileDetailsForm: React.FC<Props> = ({
     <section className="profile-details-form" style={containerStyle}>
       <form className="profile-details-form-form" onSubmit={handleSubmit}>
         <div className="profile-details-form-grid">
-          {/*  Tên */}
+          {/*Tên */}
           <div className="profile-details-form-row">
             <label className="profile-details-form-label" style={labelStyle}>
               Tên
             </label>
-            {isEditingName ? (
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="profile-details-form-input"
-                style={inputStyle}
-                disabled={isLoading}
-              />
-            ) : (
-              <div
-                className="profile-details-form-shell"
-                style={fieldShellStyle}
-              >
-                <span className="profile-details-form-value">{name}</span>
-                <button
-                  type="button"
-                  onClick={() => setIsEditingName(true)}
-                  className="profile-details-form-action"
-                  style={accentStyle}
+            <div className="flex-1 w-full">
+              {" "}
+              {isEditingName ? (
+                <>
+                  <input
+                    value={name || ""}
+                    onChange={(e) => setName(e.target.value)}
+                    className="profile-details-form-input"
+                    style={inputStyle}
+                    disabled={isLoading}
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-xs mt-1.5 ml-1 font-medium">
+                      {errors.name}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <div
+                  className="profile-details-form-shell"
+                  style={fieldShellStyle}
                 >
-                  Thay Đổi
-                </button>
-              </div>
-            )}
+                  <span className="profile-details-form-value">{name}</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingName(true)}
+                    className="profile-details-form-action"
+                    style={accentStyle}
+                  >
+                    Thay Đổi
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Email (KHÔNG CÓ NÚT THAY ĐỔI) */}
@@ -142,37 +192,47 @@ const ProfileDetailsForm: React.FC<Props> = ({
             <label className="profile-details-form-label" style={labelStyle}>
               Số điện thoại
             </label>
-            {isEditingPhone ? (
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="profile-details-form-input"
-                style={inputStyle}
-                disabled={isLoading}
-              />
-            ) : (
-              <div
-                className="profile-details-form-shell"
-                style={fieldShellStyle}
-              >
-                {phone ? (
-                  <span className="profile-details-form-value">{phone}</span>
-                ) : (
-                  <span className="profile-details-form-placeholder">
-                    Chưa cập nhật
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setIsEditingPhone(true)}
-                  className="profile-details-form-action"
-                  style={accentStyle}
+            <div className="flex-1 w-full">
+              {isEditingPhone ? (
+                <>
+                  <input
+                    type="tel"
+                    value={phone || ""}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="profile-details-form-input"
+                    style={inputStyle}
+                    disabled={isLoading}
+                  />
+                  {/* HIỂN THỊ LỖI INLINE */}
+                  {errors.phone && (
+                    <p className="text-red-500 text-xs mt-1.5 ml-1 font-medium">
+                      {errors.phone}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <div
+                  className="profile-details-form-shell"
+                  style={fieldShellStyle}
                 >
-                  Thay Đổi
-                </button>
-              </div>
-            )}
+                  {phone ? (
+                    <span className="profile-details-form-value">{phone}</span>
+                  ) : (
+                    <span className="profile-details-form-placeholder">
+                      Chưa cập nhật
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingPhone(true)}
+                    className="profile-details-form-action"
+                    style={accentStyle}
+                  >
+                    Thay Đổi
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Ngày sinh */}
@@ -219,12 +279,12 @@ const ProfileDetailsForm: React.FC<Props> = ({
                 className="profile-details-form-value"
                 style={{ color: "var(--color-primary)", fontWeight: "bold" }}
               >
-                {totalPoints.toLocaleString()} điểm
+                {(totalPoints || 0).toLocaleString()} điểm
               </span>
             </div>
           </div>
 
-          {/* Hàng Nút Lưu (Chỉ hiện khi có ô đang được edit) */}
+          {/*  Nút Lưu (Chỉ hiện khi có ô đang được edit) */}
           {(isEditingName || isEditingPhone || isEditingBirthDate) && (
             <div className="profile-details-form-submit-row">
               <button

@@ -6,6 +6,7 @@ import React from "react";
 import ProfileHeader from "@/components/user/ProfileHeader";
 import ProfileDetailsForm from "@/components/user/ProfileDetailsForm";
 import { useProfile } from "@/hooks/useProfile";
+import toast from "react-hot-toast";
 
 export default function ProfilePage() {
   // Lấy dữ liệu và hàm xử lý từ hook
@@ -17,16 +18,22 @@ export default function ProfilePage() {
     phone: string;
     birthDate: string;
   }) => {
-    // Gọi hàm update từ hook (đã kết nối API)
-    // Lưu ý: backend yêu cầu format birthDate là DD/MM/YYYY, bạn có thể format ở đây nếu cần
-    await updateProfile({
+    const result = await updateProfile({
       name: values.name,
       phone: values.phone,
-      // Chuyển đổi định dạng từ input date (YYYY-MM-DD) sang định dạng backend cần (DD/MM/YYYY)
-      birthDate: values.birthDate
+      date_of_birth: values.birthDate
         ? values.birthDate.split("-").reverse().join("/")
         : "",
     });
+
+    // NHẬN LỖI/THÀNH CÔNG TỪ BACKEND VÀ HIỂN THỊ TOAST
+    if (result.success) {
+      toast.success(result.message);
+      return true; // Trả về true để Form đóng input
+    } else {
+      toast.error(result.message);
+      return false; // Trả về false để Form tiếp tục mở input cho user sửa
+    }
   };
 
   return (
