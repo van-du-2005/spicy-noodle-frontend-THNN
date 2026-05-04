@@ -175,7 +175,7 @@ export default function Header() {
                 <div className="absolute right-0 top-full z-50 mt-2 w-60 overflow-hidden rounded-xl border border-panel-elevated-border bg-linear-to-b from-panel-elevated-2 to-panel-elevated shadow-[0_12px_40px_rgba(255,90,31,0.15)] before:absolute before:-top-2 before:right-6 before:h-4 before:w-4 before:rotate-45 before:border-l before:border-t before:border-panel-elevated-border before:bg-panel-elevated before:content-['']">
                   <div className="border-b border-[rgba(255,90,31,0.15)] px-4 py-3">
                     <Link
-                      href="/settings"
+                      href="/user/profile"
                       onClick={() => setIsUserMenuOpen(false)}
                       className="block text-xs font-semibold tracking-wide uppercase text-foreground/70 transition-colors duration-150 hover:bg-[rgba(255,90,31,0.12)] hover:text-primary rounded px-2 py-1.5 -mx-2 -my-1.5"
                     >
@@ -185,7 +185,7 @@ export default function Header() {
 
                   <div className="py-2">
                     <Link
-                      href="/orders"
+                      href="/user/purchase"
                       onClick={() => setIsUserMenuOpen(false)}
                       className="block px-4 py-2.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-[rgba(255,90,31,0.12)] hover:text-primary rounded mx-2"
                     >

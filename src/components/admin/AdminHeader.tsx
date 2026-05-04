@@ -2,25 +2,31 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Image from "next/image";
+import { useAuth } from "@/context/auth/AuthContext";
 import { Bell } from "lucide-react";
+import { USER_ROLE } from "@/constants";
 
 type AdminHeaderProps = {
   title?: string;
   description?: string;
-  userName?: string;
-  userRole?: string;
   notificationDot?: boolean;
-  avatar?: ReactNode;
 };
 
 export default function AdminHeader({
   title = "Tổng quan",
   description = "Xem tổng quan doanh thu và đơn hàng hôm nay",
-  userName = "Admin",
-  userRole = "Quản trị viên",
   notificationDot = true,
-  avatar,
 }: AdminHeaderProps) {
+  const { user } = useAuth();
+  // Xử lý dữ liệu hiển thị (Fallback nếu đang tải hoặc lỗi)
+  const userName = user?.name || "Đang tải...";
+  const userRole =
+    user?.role === USER_ROLE.ADMIN ? "Quản trị viên" : "Nhân viên";
+
+  // Lấy chữ cái đầu tiên của tên để làm Avatar mặc định (Ví dụ: "Nguyễn Văn A" -> "N")
+  const firstLetter = user?.name ? user.name.charAt(0).toUpperCase() : "A";
+
   return (
     <header className="border-b border-border bg-surface/95 backdrop-blur-sm">
       <div className="flex items-center justify-between gap-6 px-5 py-4 sm:px-6 lg:px-8">
@@ -48,8 +54,19 @@ export default function AdminHeader({
           <div className="h-10 w-px bg-border" aria-hidden="true" />
 
           <div className="flex items-center gap-3 rounded-2xl border border-panel-elevated-border bg-panel-elevated px-3 py-2.5 shadow-[0_12px_32px_var(--panel-shadow)]">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-primary-2 text-sm font-bold text-white">
-              {avatar ?? "A"}
+            <div className="relative flex h-11 w-11 shrink-0 overflow-hidden items-center justify-center rounded-full bg-linear-to-br from-primary to-primary-2 text-sm font-bold text-white">
+              {user?.avatar_url ? (
+                <Image
+                  src={user?.avatar_url}
+                  alt={userName}
+                  referrerPolicy="no-referrer"
+                  fill
+                  sizes="44px"
+                  className="object-cover"
+                />
+              ) : (
+                firstLetter
+              )}
             </div>
 
             <div className="min-w-0">

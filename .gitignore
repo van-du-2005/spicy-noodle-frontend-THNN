@@ -19,6 +19,7 @@
 # 3. Environment Variables (Bảo mật - KHÔNG ĐƯỢC XÓA)
 .env*
 .env.local
+!.env.local.example
 
 # 4. Logs & Debugging
 npm-debug.log*
