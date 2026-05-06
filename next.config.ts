@@ -1,3 +1,5 @@
+// next.config.ts
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -9,6 +11,15 @@ const nextConfig: NextConfig = {
         hostname: "*.googleusercontent.com",
         port: "",
         pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com", 
+      },
+      {
+        protocol: "https",
+        hostname: "sasin.vn", 
+        port: "8002",
       },
     ],
   },

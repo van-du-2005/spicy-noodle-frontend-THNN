@@ -5,7 +5,7 @@ import { API_URL } from "@/config/api.config";
 export const profileService = {
   // Lấy thông tin
   getProfile: async () => {
-    const response = await axios.get(`${API_URL}/users/profile`, {
+    const response = await axios.get(`${API_URL}/api/users/profile`, {
       withCredentials: true, 
     });
     return response.data;
@@ -13,7 +13,7 @@ export const profileService = {
 
   // Cập nhật thông tin
   updateProfile: async (data: { name: string; phone: string; birthDate: string }) => {
-    const response = await axios.put(`${API_URL}/users/profile`, data, {
+    const response = await axios.put(`${API_URL}/api/users/profile`, data, {
       withCredentials: true,
     });
     return response.data;

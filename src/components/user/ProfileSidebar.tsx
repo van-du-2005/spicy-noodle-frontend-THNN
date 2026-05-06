@@ -6,6 +6,7 @@ import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { User, FileText, Edit } from "lucide-react";
 import { useAuth } from "@/context/auth/AuthContext";
+import Image from "next/image";
 
 type NavKey = "account" | "orders";
 
@@ -25,7 +26,7 @@ const ProfileSidebar: React.FC<Props> = ({ onNavigate }) => {
   const active = getActiveKey();
   const { user } = useAuth();  
   const name = user?.name || "Đang tải...";
-  const avatar = user?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff5a1f&color=ffffff&rounded=true&size=128`;
+  const avatar = user?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff5a1f&color=ffffff&rounded=true&size=128&format=png`;
  
 
   const nav = [
@@ -60,11 +61,14 @@ const ProfileSidebar: React.FC<Props> = ({ onNavigate }) => {
     >
       {/* Header */}
       <div className="flex items-center gap-4">
-        <img
+        <Image
           src={avatar}
           alt={`${name} avatar`}
+          width={56} 
+          height={56}
           className="w-14 h-14 rounded-full object-cover border"
           style={{ borderColor: "var(--color-panel-elevated-hover)" }}
+          priority // Thay thế cho loading="eager" và fetchPriority="high"
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
