@@ -61,7 +61,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       id: "menu",
       label: "Quản lý Menu",
       icon: <UtensilsCrossed className="w-5 h-5" />,
-      href: "/admin",
+      href: "/admin/menu",
     },
     {
       id: "orders",
@@ -74,7 +74,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       id: "customers",
       label: "Quản lý Khách hàng",
       icon: <Users className="w-5 h-5" />,
-      href: "/admin",
+      href: "/admin/customers",
     },
     {
       id: "ai",
