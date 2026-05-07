@@ -85,6 +85,22 @@ export default function ChatbotPage() {
     initializeChat();
   }, [currentUser, sessionId]);
 
+  const handleClearChat = () => {
+    const confirmed = window.confirm(
+      "Clear current chat?"
+    );
+
+    if (!confirmed) return;
+
+    setMessages([]);
+    setSessionId(null);
+
+    localStorage.removeItem("chatbot_messages");
+    localStorage.removeItem("chatbot_sessionId");
+
+    console.log("Chat cleared");
+  };
+
   const handleSendMessage =
     async () => {
       if (!input.trim()) return;
@@ -167,9 +183,17 @@ export default function ChatbotPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">
-        AI Spicy Noodle Assistant
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">
+          AI Spicy Noodle Assistant
+        </h1>
+        <button
+          onClick={handleClearChat}
+          className="bg-gray-300 text-black px-4 py-2 rounded-lg hover:bg-gray-400"
+        >
+          Clear Chat
+        </button>
+      </div>
 
       <div className="border rounded-lg h-[600px] overflow-y-auto p-4 mb-4 bg-white">
         {messages.map(
