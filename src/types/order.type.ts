@@ -8,7 +8,7 @@ export type PaymentStatus = typeof PAYMENT_STATUS[keyof typeof PAYMENT_STATUS];
 
 export interface IOrder {
   orders_id: number; // BIGINT trong DB, về TS dùng number (hoặc string nếu số quá lớn)
-  users_id: number;
+  user_id: number;
   discount_amount: number;
   total_amount: number;
   order_status: OrderStatus;

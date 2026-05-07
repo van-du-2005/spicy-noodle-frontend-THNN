@@ -9,6 +9,7 @@ export const authService = {
     const response = await axios.get(`${API_URL}/auth/me`, {
       withCredentials: true,
     });
+
     return response.data;
   },
 
@@ -24,6 +25,22 @@ export const authService = {
         withCredentials: true, // Quan trọng để Backend xóa được Cookie
       },
     );
+
     return response.data;
   },
+};
+
+// =========================
+// NEW: helper lấy current user
+// =========================
+export const getCurrentUser = async () => {
+  try {
+    const response = await authService.getMe();
+
+    return response;
+  } catch (error) {
+    console.error(error);
+
+    return null;
+  }
 };

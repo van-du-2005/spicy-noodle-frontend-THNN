@@ -4,7 +4,7 @@ import { USER_ROLE } from '@/constants';
 export type UserRole = typeof USER_ROLE[keyof typeof USER_ROLE];
 
 export interface IUser {
-  users_id: number;
+  user_id: number;
   name: string;
   email: string;
   date_of_birth?: string | null; // DATEONLY trong Sequelize trả về chuỗi YYYY-MM-DD
