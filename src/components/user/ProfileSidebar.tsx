@@ -96,7 +96,7 @@ const ProfileSidebar: React.FC<Props> = ({ onNavigate }) => {
             }}
           >
             <Edit size={14} />
-            <span className="text-xs">Sửa Hồ Sơ</span>
+            <span className="text-xs cursor-pointer">Sửa Hồ Sơ</span>
           </button>
         </div>
       </div>
@@ -107,12 +107,12 @@ const ProfileSidebar: React.FC<Props> = ({ onNavigate }) => {
           {nav.map(({ key, label, Icon }) => {
             const isActive = active === key;
             return (
-              <li key={key} className="w-full">
+              <li key={key} className="w-full ">
                 <button
                   onClick={() =>
                     handleNavClick(nav.find((n) => n.key === key)?.href || "/")
                   }
-                  className="w-full flex items-center gap-3 p-3 rounded-md transition-colors text-left focus:outline-none"
+                  className="w-full flex items-center gap-3 p-3 rounded-md transition-colors text-left focus:outline-none cursor-pointer"
                   style={
                     isActive
                       ? {

@@ -17,9 +17,9 @@ export default function LoginPage() {
 
       <div className="relative mx-auto flex min-h-[calc(100vh-8rem)] max-w-6xl items-center justify-center">
         <div className="w-full max-w-md rounded-[1.6rem] border border-border bg-[linear-gradient(180deg,rgba(16,5,6,0.96),rgba(9,3,4,0.98))] px-5 py-6 shadow-[0_0_0_1px_rgba(255,90,31,0.05),0_24px_90px_rgba(0,0,0,0.65)] ring-1 ring-white/5 sm:px-7 sm:py-8">
-          <div className="mb-6 flex items-start justify-between gap-4">
+          <div className="mb-6 flex items-start justify-between gap-4 ">
             <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground ">
                 Đăng nhập
               </h1>
             </div>
@@ -54,15 +54,15 @@ export default function LoginPage() {
 
             <button
               type="button"
-              className="mt-1 flex h-12 w-full items-center justify-center rounded-xl bg-[linear-gradient(180deg,#ff7a33_0%,#ff551d_100%)] text-sm font-extrabold uppercase tracking-[0.22em] text-white shadow-[0_0_24px_rgba(255,90,31,0.28),0_0_44px_rgba(255,90,31,0.18)] transition hover:brightness-110 hover:shadow-[0_0_30px_rgba(255,90,31,0.38),0_0_56px_rgba(255,90,31,0.24)] active:scale-[0.99]"
+              className="mt-1 flex h-12 w-full items-center justify-center rounded-xl bg-[linear-gradient(180deg,#ff7a33_0%,#ff551d_100%)] text-sm font-extrabold uppercase tracking-[0.22em] text-white shadow-[0_0_24px_rgba(255,90,31,0.28),0_0_44px_rgba(255,90,31,0.18)] transition hover:brightness-110 hover:shadow-[0_0_30px_rgba(255,90,31,0.38),0_0_56px_rgba(255,90,31,0.24)] active:scale-[0.99] cursor-pointer"
             >
               Đăng nhập
             </button>
 
-            <div className="flex justify-start">
+            <div className="flex justify-start ">
               <button
                 type="button"
-                className="text-sm text-[#8bdde8] transition hover:text-[#b9f0f6]"
+                className="text-sm text-[#8bdde8] transition hover:text-[#b9f0f6] cursor-pointer"
               >
                 Quên mật khẩu
               </button>
@@ -81,9 +81,9 @@ export default function LoginPage() {
               onClick={() =>
                 (window.location.href = authService.getGoogleLoginUrl())
               }
-              className="flex h-12 w-full items-center gap-3 rounded-xl border border-[#3f2a2c] bg-[#120607] px-4 text-left text-[15px] font-medium text-white transition hover:border-[#5b3b3d] hover:bg-[#160809]"
+              className="flex h-12 w-full items-center gap-3 rounded-xl border border-[#3f2a2c] bg-[#120607] px-4 text-left text-[15px] font-medium text-white transition hover:border-[#5b3b3d] hover:bg-[#160809] cursor-pointer"
             >
-              <span className="flex h-6 w-6 items-center justify-center">
+              <span className="flex h-6 w-6 items-center justify-center ">
                 <GoogleMark />
               </span>
               <span className="flex-1 text-center pr-6">Google</span>
