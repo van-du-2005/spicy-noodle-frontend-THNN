@@ -3,6 +3,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Logo from "@/components/svg/Logo";
 import {
   LayoutGrid,
@@ -14,6 +15,9 @@ import {
   Menu,
   LogOut,
 } from "lucide-react";
+
+import { useAuth } from "@/context/auth/AuthContext";
+import { authService } from "@/services/auth.service";
 
 interface NavItem {
   id: string;
@@ -33,43 +37,56 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onItemSelect,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const router = useRouter();
+  // xử lý logout
+  const { setUser } = useAuth();
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      setUser(null);
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Lỗi đăng xuất:", error);
+    }
+  };
 
   const mainNavItems: NavItem[] = [
     {
       id: "overview",
       label: "Tổng quan",
       icon: <LayoutGrid className="w-5 h-5" />,
-      href: "/admin",
+      href: "/admin/dashboard",
     },
     {
       id: "menu",
       label: "Quản lý Menu",
       icon: <UtensilsCrossed className="w-5 h-5" />,
-      href: "/admin/menu",
+      href: "/admin",
     },
     {
       id: "orders",
       label: "Quản lý Đơn hàng",
       icon: <ShoppingCart className="w-5 h-5" />,
-      href: "/admin/orders",
+      href: "/admin",
       badge: 3,
     },
     {
       id: "customers",
       label: "Quản lý Khách hàng",
       icon: <Users className="w-5 h-5" />,
-      href: "/admin/customers",
+      href: "/admin",
     },
     {
       id: "ai",
       label: "Cấu hình AI",
       icon: <Bot className="w-5 h-5" />,
-      href: "/admin/ai",
+      href: "/admin",
     },
   ];
 
-  const handleNavItemClick = (itemId: string) => {
+  const handleNavItemClick = (itemId: string, href: string) => {
     onItemSelect(itemId);
+    router.push(href); // Chuyển phần Body sang trang tương ứng
   };
 
   return (
@@ -87,8 +104,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       <div className="p-4 border-b border-gray-800">
         <div className="flex items-center gap-3">
           {/* Logo Container */}
-          <div className="shrink-0 rounded-lg bg-linear-to-br from-orange-500 to-red-600 p-2">
-            <Logo className="w-6 h-6 text-white" />
+          <div className="shrink-0 rounded-lg flex items-center justify-center">
+            <Logo className="w-12 h-auto" />
           </div>
 
           {/* Brand Name and Subtitle */}
@@ -109,12 +126,13 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {mainNavItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => handleNavItemClick(item.id)}
+              onClick={() => handleNavItemClick(item.id, item.href)}
               className={`
                   w-full flex items-center justify-between
                   px-4 py-3 rounded-lg
                   transition-all duration-200
                   group relative
+                  cursor-pointer
                   ${
                     activeItem === item.id
                       ? "bg-linear-to-r from-orange-500 to-red-600 text-white shadow-lg"
@@ -168,7 +186,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       {/* Footer Navigation */}
       <div className="px-3 py-4 space-y-2">
         {/* View Customer Page */}
-        <button
+        {/* <button
           className={`
               w-full flex items-center gap-3
               px-4 py-3 rounded-lg
@@ -180,7 +198,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {!isCollapsed && (
             <span className="text-sm truncate">Xem trang khách hàng</span>
           )}
-        </button>
+        </button> */}
 
         {/* Collapse Button */}
         <button
@@ -190,6 +208,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               px-4 py-3 rounded-lg
               text-gray-400 hover:text-gray-200
               transition-colors duration-200
+              cursor-pointer
             `}
         >
           <Menu className="h-5 w-5 shrink-0" />
@@ -198,12 +217,14 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
         {/* Logout Button */}
         <button
+          onClick={handleLogout}
           className={`
               w-full flex items-center gap-3
               px-4 py-3 rounded-lg
               bg-gray-800 hover:bg-gray-700
               text-red-500 hover:text-red-400
               transition-all duration-200
+              cursor-pointer
             `}
         >
           <LogOut className="h-5 w-5 shrink-0" />
