@@ -43,13 +43,40 @@ export default function CheckoutPage() {
   const handlePlaceOrder = () => {
     if (!isFormValid) return;
 
-    // Hiển thị thông báo thành công (Bạn có thể thay bằng Toast xịn hơn sau)
+    // 1. Tạo một đơn hàng mới từ giỏ hàng hiện tại
+    const newOrder = {
+      id: `#${Math.floor(1000 + Math.random() * 9000)}`, // Tạo mã ngẫu nhiên #1234
+      time: new Date().toLocaleString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        day: "2-digit",
+        month: "2-digit",
+      }),
+      customerName: formData.fullName,
+      phone: formData.phone,
+      // Gom tên các món lại thành 1 chuỗi để hiển thị
+      itemsPreview: cartItems
+        .map((item) => `${item.name} ×${item.quantity}`)
+        .join(", "),
+      totalPrice: finalTotal,
+      status: "pending", // Mặc định đơn mới luôn là Chờ xác nhận
+    };
+
+    // 2. Lấy danh sách đơn cũ từ Database tạm (localStorage) và thêm đơn mới vào
+    const existingOrders = JSON.parse(
+      localStorage.getItem("adminOrders") || "[]",
+    );
+    localStorage.setItem(
+      "adminOrders",
+      JSON.stringify([newOrder, ...existingOrders]),
+    );
+
+    // 3. Thông báo và dọn dẹp
     alert(
       `🎉 Đơn hàng đã được ghi nhận!\nCảm ơn ${formData.fullName}, Mì Cay Đỉnh sẽ giao đến bạn trong tích tắc.`,
     );
-
-    clearCart(); // Xóa sạch giỏ hàng sau khi mua
-    router.push("/"); // Đẩy người dùng về trang chủ
+    clearCart();
+    router.push("/");
   };
 
   // Nếu lỡ vào trang này mà không có món nào thì mời quay lại mua tiếp
