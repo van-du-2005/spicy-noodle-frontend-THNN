@@ -15,13 +15,12 @@ interface Product {
   price: string;
   max_spicy_level: number;
   short_description: string;
-  Toppings: Topping[];
   ProductImages?: { image_url: string }[];
   product_images?: { image_url: string }[];
   image_url?: string;
 }
 
-// Hàm xử lý màu sắc và nhãn dán cho từng cấp độ cay (Đã cập nhật theo yêu cầu)
+// Hàm xử lý màu sắc và nhãn dán cho từng cấp độ cay
 const getSpicyConfig = (level: number | null) => {
   if (level === null)
     return {
@@ -86,6 +85,7 @@ export default function ProductModal({
   onClose: () => void;
 }) {
   const [product, setProduct] = useState<Product | null>(null);
+  const [toppingsList, setToppingsList] = useState<Topping[]>([]); // 👈 Thêm state quản lý Topping chuẩn
   const [spicyLevel, setSpicyLevel] = useState<number | null>(null);
   const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
   const [quantity, setQuantity] = useState(1);
@@ -93,23 +93,34 @@ export default function ProductModal({
   const { addToCart } = useCart();
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}`,
-        );
-        const result = await res.json();
-        if (result.success) {
-          setProduct(result.data);
-          if (result.data.max_spicy_level === 0) {
+        // 👈 Gọi song song API món ăn và API Topping (Cái mới tạo)
+        const [productRes, toppingsRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/toppings/product/${productId}`)
+        ]);
+
+        const productResult = await productRes.json();
+        const toppingsResult = await toppingsRes.json();
+
+        // Xử lý dữ liệu món ăn
+        if (productResult.success) {
+          setProduct(productResult.data);
+          if (productResult.data.max_spicy_level === 0) {
             setSpicyLevel(0);
           }
+        }
+
+        // Xử lý dữ liệu Topping chuẩn xác theo ID món
+        if (toppingsResult.success) {
+          setToppingsList(toppingsResult.data);
         }
       } catch (error) {
         console.error(error);
       }
     };
-    fetchProduct();
+    fetchData();
   }, [productId]);
 
   if (!product) return null;
@@ -156,9 +167,7 @@ export default function ProductModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
-      {/* TĂNG BỀ NGANG: Đổi max-w-[420px] thành max-w-[500px] */}
       <div className="bg-[#0c0505] border border-[#3f1616] w-full max-w-[500px] rounded-3xl overflow-hidden relative flex flex-col max-h-[90vh] shadow-[0_0_40px_rgba(255,69,0,0.1)]">
-        {/* Nút Đóng */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-20 w-8 h-8 bg-[#140505]/80 border border-[#3f1616] text-gray-400 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md transition-colors"
@@ -166,7 +175,6 @@ export default function ProductModal({
           ✕
         </button>
 
-        {/* Ảnh Món Ăn - Tăng nhẹ chiều cao cho cân đối với bề ngang mới */}
         <div className="h-[250px] w-full relative flex-shrink-0">
           {imageUrl ? (
             <img
@@ -182,9 +190,7 @@ export default function ProductModal({
           <div className="absolute inset-0 bg-gradient-to-t from-[#0c0505] via-[#0c0505]/40 to-transparent"></div>
         </div>
 
-        {/* Nội dung cuộn được */}
         <div className="px-7 pb-4 overflow-y-auto custom-scrollbar text-white -mt-8 relative z-10 flex-1">
-          {/* Tên & Giá */}
           <div className="flex justify-between items-start mb-1">
             <h2 className="text-[22px] font-extrabold tracking-tight leading-tight w-2/3">
               {product.name}
@@ -197,7 +203,6 @@ export default function ProductModal({
             {product.short_description || "Món ngon chuẩn vị Hàn Quốc"}
           </p>
 
-          {/* CHỌN MỨC ĐỘ CAY */}
           {product.max_spicy_level > 0 && (
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
@@ -227,7 +232,6 @@ export default function ProductModal({
                             : "border-[#3f1616] bg-[#110505] hover:border-gray-600"
                         }`}
                       >
-                        {/* VÒNG TRÒN BỌC SỐ */}
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${config.circleBg}`}
                         >
@@ -237,8 +241,6 @@ export default function ProductModal({
                             {i}
                           </span>
                         </div>
-
-                        {/* ICON LỬA Ở DƯỚI */}
                         <span
                           className={`text-[10px] ${isSelected ? (i <= 2 ? "text-[#eab308]" : i <= 5 ? "text-[#f97316]" : "text-[#dc2626]") : "text-gray-500"}`}
                         >
@@ -252,14 +254,14 @@ export default function ProductModal({
             </div>
           )}
 
-          {/* CHỌN TOPPING */}
-          {product.Toppings && product.Toppings.length > 0 && (
+          {/* 👈 Thay đổi lớn ở phần CHỌN TOPPING: Dùng state toppingsList */}
+          {toppingsList && toppingsList.length > 0 && (
             <div className="mb-4">
               <h3 className="font-bold text-[15px] mb-4 flex items-center gap-2">
                 <span>🥘</span> Topping Thêm
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                {product.Toppings.map((topping) => {
+                {toppingsList.map((topping) => {
                   const isSelected = selectedToppings.some(
                     (t) => t.toppings_id === topping.toppings_id,
                   );
@@ -300,7 +302,6 @@ export default function ProductModal({
           )}
         </div>
 
-        {/* FOOTER THANH TOÁN */}
         <div className="p-5 bg-[#0c0505] border-t border-[#3f1616] z-20">
           <div className="flex justify-between items-center mb-5 px-1">
             <span className="text-white font-medium text-sm">Số lượng</span>

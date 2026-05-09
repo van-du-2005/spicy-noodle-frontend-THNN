@@ -4,6 +4,7 @@
 
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import Logo from "@/components/svg/Logo";
 import {
   LayoutGrid,
@@ -69,7 +70,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Quản lý Đơn hàng",
       icon: <ShoppingCart className="w-5 h-5" />,
       href: "/admin/orders",
-      badge: 3,
     },
     {
       id: "customers",
@@ -103,7 +103,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
     >
       {/* Header - Logo and Brand */}
       <div className="p-4 border-b border-gray-800">
-        <div className="flex items-center gap-3">
+        {/* Thay thẻ div bằng thẻ Link, thêm xíu hiệu ứng hover cho đẹp */}
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           {/* Logo Container */}
           <div className="shrink-0 rounded-lg flex items-center justify-center">
             <Logo className="w-12 h-auto" />
@@ -118,7 +119,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <p className="text-xs text-gray-400 truncate">Admin Panel</p>
             </div>
           )}
-        </div>
+        </Link>
       </div>
 
       {/* Main Navigation */}

@@ -351,6 +351,17 @@ export default function Header() {
                     >
                       Đơn Mua
                     </Link>
+
+                    {/* CHỈ HIỆN NÚT NÀY NẾU TÀI KHOẢN LÀ ADMIN */}
+                    {user?.role === "admin" && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="block px-4 py-2.5 text-sm font-medium text-orange-500 transition-colors duration-150 hover:bg-[rgba(255,90,31,0.12)] hover:text-orange-600 rounded mx-2 mt-1"
+                      >
+                        Quản trị 
+                      </Link>
+                    )}
                   </div>
 
                   <div className="border-t border-[rgba(255,90,31,0.15)] px-4 py-3">
