@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import { Toaster } from "react-hot-toast";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminGuard from "@/components/auth/AdminGuard";
@@ -61,8 +62,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </main>
       </div>
     </div>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "var(--color-panel-elevated)",
+            color: "#fff",
+          },
+        }}
+      />
     </AdminGuard>
-
-    
   );
 }

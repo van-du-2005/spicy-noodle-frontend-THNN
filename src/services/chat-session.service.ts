@@ -1,6 +1,8 @@
-export async function createChatSession() {
+export async function createChatSession(userId?: string | number) {
+  const body = userId ? JSON.stringify({ users_id: userId }) : undefined;
+
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/chat-sessions`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/chat-sessions`,
     {
       method: "POST",
 
@@ -8,6 +10,7 @@ export async function createChatSession() {
         "Content-Type": "application/json",
       },
 
+      body,
       credentials: "include",
     }
   );
@@ -19,4 +22,31 @@ export async function createChatSession() {
   }
 
   return response.json();
+}
+
+// Fetch chat history for logged-in user by sessionId
+export async function getChatHistory(sessionId: number) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/chat-sessions/${sessionId}/messages`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      console.warn(`[Get Chat History] Status: ${response.status}`);
+      return [];
+    }
+
+    const data = await response.json();
+    return data.messages || [];
+  } catch (error) {
+    console.error("[Get Chat History Error]", error);
+    return [];
+  }
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { sendChatMessage } from "@/services/chatbot.service";
-import { createChatSession } from "@/services/chat-session.service";
+import { createChatSession, getChatHistory } from "@/services/chat-session.service";
 
 import { ChatMessage } from "@/types/chatbot.type";
 
@@ -30,16 +30,47 @@ export default function ChatbotPage() {
     useState<any>(null);
 
   // =========================
-  // Load guest messages
+  // Load chat messages based on user status
   // =========================
   useEffect(() => {
-    const savedMessages =
-      loadGuestMessages();
+    // If user not logged in, clear messages
+    if (!currentUser?.users_id) {
+      setMessages([]);
+      setSessionId(null);
+      return;
+    }
 
+    // For logged-in user, load from localStorage as fallback
+    const savedMessages = loadGuestMessages();
     if (savedMessages.length > 0) {
       setMessages(savedMessages);
     }
-  }, []);
+  }, [currentUser]);
+
+  // =========================
+  // Fetch chat history from backend when session is created
+  // =========================
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      if (!sessionId) return;
+
+      try {
+        const history = await getChatHistory(sessionId);
+        if (history && history.length > 0) {
+          // Convert backend format to ChatMessage format if needed
+          const formattedMessages = history.map((msg: any) => ({
+            role: msg.role || (msg.is_user ? "user" : "assistant"),
+            content: msg.content || msg.message,
+          }));
+          setMessages(formattedMessages);
+        }
+      } catch (error) {
+        console.error("Failed to fetch chat history:", error);
+      }
+    };
+
+    fetchChatHistory();
+  }, [sessionId]);
 
   // =========================
   // Save guest messages
@@ -73,7 +104,7 @@ export default function ChatbotPage() {
       if (!currentUser || sessionId) return;
       
       try {
-        const session = await createChatSession();
+        const session = await createChatSession(currentUser.users_id);
         if (session?.chat_sessions_id) {
           setSessionId(session.chat_sessions_id);
         }

@@ -21,7 +21,7 @@ export async function sendChatMessage({
     body.userId = userId;
   }
 
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/chatbot`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/api/chatbot`;
   console.log("[Chatbot Request]", { url, body });
 
   const response = await fetch(

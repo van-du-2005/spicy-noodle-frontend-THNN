@@ -66,6 +66,11 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await authService.logout();
+      
+      // Clear chat state from localStorage
+      localStorage.removeItem("chatbot_messages");
+      localStorage.removeItem("chatbot_sessionId");
+      
       setUser(null); // Xóa user khỏi trạng thái hiện tại
       setIsUserMenuOpen(false);
       window.location.href = "/"; // Đẩy về trang chủ và reload

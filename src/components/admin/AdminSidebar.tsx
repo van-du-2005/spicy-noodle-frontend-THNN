@@ -80,7 +80,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       id: "ai",
       label: "Cấu hình AI",
       icon: <Bot className="w-5 h-5" />,
-      href: "/admin",
+      href: "/admin/ai",
     },
   ];
 
