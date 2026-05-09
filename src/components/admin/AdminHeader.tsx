@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useAuth } from "@/context/auth/AuthContext";
 import { Bell } from "lucide-react";
 import { USER_ROLE } from "@/constants";
+import { usePathname } from "next/navigation";
 
 type AdminHeaderProps = {
   title?: string;
@@ -19,6 +20,26 @@ export default function AdminHeader({
   notificationDot = true,
 }: AdminHeaderProps) {
   const { user } = useAuth();
+  // Gọi hàm lấy URL hiện tại
+  const pathname = usePathname();
+
+  // 👇 KHỐI LOGIC TỰ ĐỘNG ĐỔI TÊN THEO URL 👇
+  let displayTitle = title;
+  let displayDesc = description;
+
+  if (pathname.includes("/admin/orders")) {
+    displayTitle = "Quản lý Đơn hàng";
+    displayDesc = "Theo dõi và cập nhật trạng thái đơn hàng";
+  } else if (pathname.includes("/admin/customers")) {
+    displayTitle = "Quản lý Khách hàng";
+    displayDesc = "Xem thông tin, hoạt động và lịch sử mua hàng của khách";
+  } else if (pathname.includes("/admin/menu")) {
+    displayTitle = "Quản lý Menu";
+    displayDesc = "Quản lý danh mục món ăn, topping và combo trên hệ thống";
+  } else if (pathname.includes("/admin/dashboard") || pathname === "/admin") {
+    displayTitle = "Tổng quan";
+    displayDesc = "Xem tổng quan doanh thu và đơn hàng hôm nay";
+  }
   // Xử lý dữ liệu hiển thị (Fallback nếu đang tải hoặc lỗi)
   const userName = user?.name || "Đang tải...";
   const userRole =
@@ -32,10 +53,10 @@ export default function AdminHeader({
       <div className="flex items-center justify-between gap-6 px-5 py-4 sm:px-6 lg:px-8">
         <div className="min-w-0">
           <h1 className="truncate text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {title}
+            {displayTitle}
           </h1>
           <p className="mt-1 truncate text-sm text-foreground/65 sm:text-base">
-            {description}
+            {displayDesc}
           </p>
         </div>
 

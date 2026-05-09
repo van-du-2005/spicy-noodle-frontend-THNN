@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { orderService } from "@/services/order.service"; // Đường dẫn có thể khác tùy cấu trúc thư mục của bạn
 
 const SHIPPING_FEE = 25000;
 
@@ -40,43 +41,48 @@ export default function CheckoutPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!isFormValid) return;
 
-    // 1. Tạo một đơn hàng mới từ giỏ hàng hiện tại
-    const newOrder = {
-      id: `#${Math.floor(1000 + Math.random() * 9000)}`, // Tạo mã ngẫu nhiên #1234
-      time: new Date().toLocaleString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        day: "2-digit",
-        month: "2-digit",
-      }),
-      customerName: formData.fullName,
-      phone: formData.phone,
-      // Gom tên các món lại thành 1 chuỗi để hiển thị
-      itemsPreview: cartItems
-        .map((item) => `${item.name} ×${item.quantity}`)
-        .join(", "),
-      totalPrice: finalTotal,
-      status: "pending", // Mặc định đơn mới luôn là Chờ xác nhận
-    };
+    try {
+      const fullAddress = `${formData.address}, ${formData.district}, ${formData.city}`;
 
-    // 2. Lấy danh sách đơn cũ từ Database tạm (localStorage) và thêm đơn mới vào
-    const existingOrders = JSON.parse(
-      localStorage.getItem("adminOrders") || "[]",
-    );
-    localStorage.setItem(
-      "adminOrders",
-      JSON.stringify([newOrder, ...existingOrders]),
-    );
+      //  XỬ LÝ LOGIC THANH TOÁN
 
-    // 3. Thông báo và dọn dẹp
-    alert(
-      `🎉 Đơn hàng đã được ghi nhận!\nCảm ơn ${formData.fullName}, Mì Cay Đỉnh sẽ giao đến bạn trong tích tắc.`,
-    );
-    clearCart();
-    router.push("/");
+      const isOnline = paymentMethod === "online";
+
+      const orderData = {
+        totalAmount: finalTotal,
+        receiverName: formData.fullName,
+        receiverPhone: formData.phone,
+        receiverAddress: fullAddress,
+
+        paymentMethod: isOnline ? "online" : "COD",
+        paymentStatus: isOnline ? "da_thanh_toan" : "chua_thanh_toan",
+
+        items: cartItems.map((item: any) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          spicyLevel: item.spicyLevel || 0,
+          price: item.basePrice || item.price,
+          toppings: item.toppings || [],
+        })),
+      };
+
+      // Gọi API bắn xuống Backend
+      const res = await orderService.createOrder(orderData);
+
+      if (res.success) {
+        alert(
+          `🎉 Đơn hàng đã được ghi nhận!\nCảm ơn ${formData.fullName}, Mì Cay Đỉnh sẽ giao đến bạn trong tích tắc.`,
+        );
+        clearCart();
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Lỗi khi đặt hàng:", error);
+      alert("Đã xảy ra lỗi hệ thống khi đặt hàng. Vui lòng thử lại sau!");
+    }
   };
 
   // Nếu lỡ vào trang này mà không có món nào thì mời quay lại mua tiếp
