@@ -21,6 +21,18 @@ const nextConfig: NextConfig = {
         hostname: "sasin.vn", 
         port: "8002",
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn2.fptshop.com.vn', // Cho phép link từ FPT Shop
+      },
+      {
+        protocol: 'https',
+        hostname: '**', // (Mẹo nhỏ) Dấu ** này cho phép TẤT CẢ các link ảnh trên mạng để bạn tiện test dữ liệu
+      },
+      {
+        protocol: 'https',
+        hostname: 'vinwonders.com', 
+      }
     ],
   },
 };

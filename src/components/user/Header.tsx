@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/components/svg/Logo";
 import { Search, ShoppingCart } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const { user, setUser, loading } = useAuth();
@@ -220,6 +221,10 @@ export default function Header() {
   //     </div>
   //   </header>
   // );
+  const { openCart, cartItems } = useCart();
+
+  // Tính tổng số lượng món ăn đang có trong giỏ
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between overflow-visible bg-gray-950/95 backdrop-blur-md px-5 py-3 shadow-md border-b border-gray-800">
       {/* Left: Logo & Brand Name */}
@@ -279,13 +284,18 @@ export default function Header() {
 
         {/* Nút Giỏ hàng mới */}
         <button
+          onClick={openCart}
           aria-label="Giỏ hàng"
           className="relative rounded-full p-2.5 text-gray-300 hover:bg-gray-800 hover:text-primary transition-colors cursor-pointer"
         >
           <ShoppingCart className="h-5 w-5" />
-          <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-            0
-          </span>
+
+          {/* Chỉ hiện cục màu đỏ khi trong giỏ có đồ (totalItems > 0) */}
+          {totalItems > 0 && (
+            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+              {totalItems}
+            </span>
+          )}
         </button>
 
         {/* User Auth */}
@@ -349,6 +359,17 @@ export default function Header() {
                     >
                       Đơn Mua
                     </Link>
+
+                    {/* CHỈ HIỆN NÚT NÀY NẾU TÀI KHOẢN LÀ ADMIN */}
+                    {user?.role === "admin" && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="block px-4 py-2.5 text-sm font-medium text-orange-500 transition-colors duration-150 hover:bg-[rgba(255,90,31,0.12)] hover:text-orange-600 rounded mx-2 mt-1"
+                      >
+                        Quản trị 
+                      </Link>
+                    )}
                   </div>
 
                   <div className="border-t border-[rgba(255,90,31,0.15)] px-4 py-3">

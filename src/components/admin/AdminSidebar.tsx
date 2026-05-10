@@ -3,7 +3,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import Logo from "@/components/svg/Logo";
 import {
   LayoutGrid,
@@ -38,6 +39,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   // xử lý logout
   const { setUser } = useAuth();
   const handleLogout = async () => {
@@ -61,20 +63,19 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       id: "menu",
       label: "Quản lý Menu",
       icon: <UtensilsCrossed className="w-5 h-5" />,
-      href: "/admin",
+      href: "/admin/menu",
     },
     {
       id: "orders",
       label: "Quản lý Đơn hàng",
       icon: <ShoppingCart className="w-5 h-5" />,
-      href: "/admin",
-      badge: 3,
+      href: "/admin/orders",
     },
     {
       id: "customers",
       label: "Quản lý Khách hàng",
       icon: <Users className="w-5 h-5" />,
-      href: "/admin",
+      href: "/admin/customers",
     },
     {
       id: "ai",
@@ -102,7 +103,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
     >
       {/* Header - Logo and Brand */}
       <div className="p-4 border-b border-gray-800">
-        <div className="flex items-center gap-3">
+        {/* Thay thẻ div bằng thẻ Link, thêm xíu hiệu ứng hover cho đẹp */}
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           {/* Logo Container */}
           <div className="shrink-0 rounded-lg flex items-center justify-center">
             <Logo className="w-12 h-auto" />
@@ -117,7 +119,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <p className="text-xs text-gray-400 truncate">Admin Panel</p>
             </div>
           )}
-        </div>
+        </Link>
       </div>
 
       {/* Main Navigation */}
@@ -128,24 +130,24 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               key={item.id}
               onClick={() => handleNavItemClick(item.id, item.href)}
               className={`
-                  w-full flex items-center justify-between
-                  px-4 py-3 rounded-lg
-                  transition-all duration-200
-                  group relative
-                  cursor-pointer
-                  ${
-                    activeItem === item.id
-                      ? "bg-linear-to-r from-orange-500 to-red-600 text-white shadow-lg"
-                      : "text-gray-300 hover:bg-gray-800"
-                  }
-                `}
+      w-full flex items-center justify-between
+      px-4 py-3 rounded-lg
+      transition-all duration-200
+      group relative
+      cursor-pointer
+      ${
+        pathname.includes(item.href) // 👈 Đã thay activeItem === item.id thành cái này
+          ? "bg-linear-to-r from-orange-500 to-red-600 text-white shadow-lg"
+          : "text-gray-300 hover:bg-gray-800"
+      }
+    `}
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span
                   className={`
-                      shrink-0
-                      ${activeItem === item.id ? "text-white" : "text-gray-400 group-hover:text-gray-200"}
-                    `}
+          shrink-0
+          ${pathname.includes(item.href) ? "text-white" : "text-gray-400 group-hover:text-gray-200"} // 👈 Cả chỗ này nữa
+        `}
                 >
                   {item.icon}
                 </span>
